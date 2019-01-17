@@ -9,7 +9,9 @@ each index has a list of all the possible values that could be used to fill the 
 
 
 
-#API
+### API
+
+
 ## isValidBoard():
 Return:  True if the input board is valid not necessarily solvable. 
          Valid = No valid number(1-9) occurs more than once in a row, col, box.

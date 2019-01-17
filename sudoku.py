@@ -12,7 +12,6 @@ class Sudoku:
         self.box_identifiers = [set([i for i in range(3)]),set([i for i in range(3,6)]),set([i for i in range(6,9)])]
         
     def isValidBoard(self):
-        invalid = None
         for r in range(9):
             for c in range(9):
                 invalid = self.checkRow(r,c,self.board[r][c]) and self.checkCol(r,c,self.board[r][c]) and self.checkBox(r,c,self.board[r][c])
@@ -90,22 +89,32 @@ class Sudoku:
                         self.board[row][col] = int(charAtIndex)
                     else:
                         raise ValueError("Invalid Board: BOARD CONTAINS INVALID CHARACTERS")
-        self.updateHints()
+        # Po
+        self.initial_populationOfHints()
 
-    def updateHints(self):
-        """
-        Updates the Hints given the Board has been parsed.
-        """
+    def initial_populationOfHints(self):
         for row in range(9):
             for col in range(9):
                 if self.board[row][col]!=None:
                     value = self.board[row][col]
-                    self.hints[row][col]= None
-                    self.hintColUpdate(col,value)
-                    self.hintRowUpdate(row,value)
-                    self.hintBlockUpdate(row,col,value)
-                
+                    self.updateHintsAt(row,col,value)
 
+    def updateHintsAt(self,row,col,value):
+        """
+        Updates the Hints given you want to update the board[row][col] with value.
+        Return : IndexError if index not on board
+                 ValueError if value not in [0,8]
+        """
+        if row<0 or row>8 or col<0 or col>9:
+            raise IndexError("Index Out of Board")
+        if value>8 or value<0 or not isinstance(value, int):
+            raise ValueError("Invalid Value Found")
+        self.board[row][col] = value
+        self.hints[row][col]= None
+        self.hintColUpdate(col,value)
+        self.hintRowUpdate(row,value)
+        self.hintBlockUpdate(row,col,value)
+                
     def hintRowUpdate(self,rowNumber,value):
         '''
         Input:      rowNumber = INT
@@ -117,7 +126,6 @@ class Sudoku:
             if self.hints[rowNumber][colNumber] != None:
                 if value in self.hints[rowNumber][colNumber]:
                     self.hints[rowNumber][colNumber].remove(value)
-
 
     def hintColUpdate(self,colNumber,value):
         '''
